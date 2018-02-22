@@ -1,53 +1,74 @@
 <?php
 
 /* @var $this yii\web\View */
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
 
-$this->title = 'My Yii Application';
+$this->title = 'Short link';
+$basic_url = Yii::$app->params['basic_url'];
+
+$script = <<< JS
+    
+var addAddres = function () {
+        $.ajax({
+            url: window.location.protocol + "//" + window.location.hostname + "/site-ajax/get-short-url",
+            type: 'POST',
+            dataType: 'JSON',
+            beforeSend: function(){
+                $("#short_link_div").text('');
+            },
+            data: { output: { url : $("#url-url").val() } },
+            cache: false,
+            success: function (msg) {
+                if (!msg.error) {
+                    $("#short_link_div").text('$basic_url' +'/'+ msg.msg.short_url);
+                }
+            }
+            //console.log(msg);
+        });
+    };
+$(function(){
+    $("#get_short_ulr").on('click',function(e){
+        addAddres();
+        e.preventDefault();
+        return false;
+    });    
+});
+JS;
+
+$this->registerJs($script, yii\web\View::POS_END,'ajax');
+
 ?>
 <div class="site-index">
+    <div class="row">
+        <div class="col-md-9">
 
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
+            <?php $form = ActiveForm::begin(['id'=>'formShortUrl']); ?>
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
+            <div class="form-group">
+                <div class="col-lg-12">
+                    <?= $form->field($model,'url')->textInput(['placeholder'=>'Введите полный адрес сайта: http(s)://адресс']) ?>
+                </div>
             </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
+            <div class="form-group">
+                <div class="col-lg-12">
+                    <a type="button" href='' class="btn btn-primary" id="get_short_ulr">Получить ссылку</a>
+                </div>
             </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+            <?php ActiveForm::end() ?>
 
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
+        </div>
+        <div class="col-md-3"></div>
+        <div class="col-md-12"><br><br></div>
+        <div class="col-md-9">
+            <div class="col-md-12">
+                <label class="control-label" for="url-url">Короткая ссылка</label>
+                <div class="form-control bg-success" id="short_link_div" style></div>
             </div>
         </div>
-
+        <div class="col-md-3"></div>
     </div>
+
 </div>

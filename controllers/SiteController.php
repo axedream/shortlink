@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\Url;
 use yii\web\Controller;
 
 class SiteController extends Controller
@@ -23,8 +24,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-
-        return $this->render('index');
+        $model = new Url();
+        return $this->render('index',['model'=>$model]);
     }
 
 
